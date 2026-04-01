@@ -48,7 +48,7 @@ interface AppState {
 export const useStore = create<AppState>()(
   persist(
     (set: any) => ({
-      role: 'viewer', // default role
+      role: 'viewer' as Role, // default role
       setRole: (role: Role) => set({ role }),
       transactions: mockTransactions,
       addTransaction: (tx: Omit<Transaction, 'id'>) => set((state: AppState) => ({

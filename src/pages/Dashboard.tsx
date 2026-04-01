@@ -1,4 +1,4 @@
-import { useStore } from '@/store/useStore';
+import { useStore, Transaction } from '@/store/useStore';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { DollarSign, ArrowUpRight, ArrowDownRight } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
@@ -7,19 +7,19 @@ export function Dashboard() {
   const { transactions } = useStore();
 
   const totalIncome = transactions
-    .filter((t) => t.type === 'income')
-    .reduce((sum, t) => sum + t.amount, 0);
+    .filter((t: Transaction) => t.type === 'income')
+    .reduce((sum: number, t: Transaction) => sum + t.amount, 0);
 
   const totalExpense = transactions
-    .filter((t) => t.type === 'expense')
-    .reduce((sum, t) => sum + t.amount, 0);
+    .filter((t: Transaction) => t.type === 'expense')
+    .reduce((sum: number, t: Transaction) => sum + t.amount, 0);
 
   const balance = totalIncome - totalExpense;
 
   // Process data for charts
   const expenseByCategory = transactions
-    .filter(t => t.type === 'expense')
-    .reduce((acc, t) => {
+    .filter((t: Transaction) => t.type === 'expense')
+    .reduce((acc: Record<string, number>, t: Transaction) => {
       acc[t.category] = (acc[t.category] || 0) + t.amount;
       return acc;
     }, {} as Record<string, number>);
@@ -34,7 +34,7 @@ export function Dashboard() {
   // Process data for Area chart (cumulative balance over time)
   const sortedTx = [...transactions].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
   let currentBalance = 0;
-  const areaData = sortedTx.map(t => {
+  const areaData = sortedTx.map((t: Transaction) => {
     currentBalance += t.type === 'income' ? t.amount : -t.amount;
     return { date: t.date, balance: currentBalance };
   });
@@ -118,7 +118,7 @@ export function Dashboard() {
                     paddingAngle={5}
                     dataKey="value"
                   >
-                    {pieData.map((entry, index) => (
+                    {pieData.map((_, index) => (
                       <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                     ))}
                   </Pie>
